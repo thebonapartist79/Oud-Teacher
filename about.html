@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Oud Tutor · About</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="brand">Oud Tutor</h1>
+      <nav class="nav">
+        <a href="index.html">Tuner</a>
+        <a href="lessons.html">Lessons</a>
+        <a href="about.html" aria-current="page">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h2>About this site</h2>
+      <p>This lightweight site hosts your oud lessons and a private, in‑browser tuner. The tuner uses Web Audio and a proven pitch detection method (YIN/MPM variant) tailored for the CFADGC preset.</p>
+    </section>
+
+    <section>
+      <h3>Privacy</h3>
+      <p>Tuning happens entirely on your device. Microphone audio never leaves the browser.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> Oud Tutor.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
