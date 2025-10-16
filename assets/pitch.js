@@ -1,11 +1,18 @@
-// pitch.js — YIN detector + utilities
-function rms(buf){ let s=0; for(let i=0;i<buf.length;i++){const v=buf[i]; s+=v*v;} return Math.sqrt(s/buf.length); }
+// pitch.js — YIN + zero-crossing fallback + utilities
 
+// Root-mean-square for gating
+function rms(buf){
+  let s=0; for(let i=0;i<buf.length;i++){const v=buf[i]; s+=v*v;}
+  return Math.sqrt(s/buf.length);
+}
+
+// McLeod/YIN variant
 function detectPitchYIN(buffer, sampleRate, threshold=0.12){
   const size = buffer.length;
   const half = size>>>1;
   const yin = new Float32Array(half);
   yin[0]=1;
+
   for(let tau=1;tau<half;tau++){
     let sum=0;
     for(let i=0;i<half;i++){ const d=buffer[i]-buffer[i+tau]; sum+=d*d; }
@@ -13,6 +20,7 @@ function detectPitchYIN(buffer, sampleRate, threshold=0.12){
   }
   let run=0;
   for(let tau=1;tau<half;tau++){ run+=yin[tau]; yin[tau]=yin[tau]*tau/(run||1); }
+
   let tauEst=-1;
   for(let tau=2;tau<half;tau++){
     if(yin[tau]<threshold){
@@ -21,6 +29,7 @@ function detectPitchYIN(buffer, sampleRate, threshold=0.12){
     }
   }
   if(tauEst<0) return null;
+
   const x0 = yin[tauEst-1] ?? yin[tauEst];
   const x1 = yin[tauEst];
   const x2 = yin[tauEst+1] ?? yin[tauEst];
@@ -28,6 +37,23 @@ function detectPitchYIN(buffer, sampleRate, threshold=0.12){
   const betterTau = tauEst + (denom ? (x2 - x0)/(2*denom) : 0);
   const freq = sampleRate / betterTau;
   if(!isFinite(freq) || freq<20) return null;
+  return freq;
+}
+
+// Simple zero-crossing fallback (robust when YIN fails on low SNR)
+function detectPitchZeroCrossing(buf, sampleRate){
+  // bandlimit by ignoring extreme amplitudes
+  let crossings = 0, last = buf[0];
+  for(let i=1;i<buf.length;i++){
+    const cur = buf[i];
+    if ((last <= 0 && cur > 0) || (last >= 0 && cur < 0)) crossings++;
+    last = cur;
+  }
+  if (crossings < 2) return null;
+  // Approx period = 2 * N / crossings  (two crossings per cycle)
+  const period = (2 * buf.length) / crossings;
+  const freq = sampleRate / period;
+  if (freq < 40 || freq > 1000 || !isFinite(freq)) return null;
   return freq;
 }
 
@@ -41,13 +67,14 @@ function frequencyToNote(freq, a4=440){
   return { note: `${name}${octave}`, cents, noteFreq };
 }
 
+// CFADGC courses (left -> right, C4 rightmost)
 const COURSES = [
   { name:"C2", hz:65.406 },
   { name:"F2", hz:87.307 },
   { name:"A2", hz:110.000 },
   { name:"D3", hz:146.832 },
   { name:"G3", hz:195.998 },
-  { name:"C4", hz:261.626 } // rightmost
+  { name:"C4", hz:261.626 }
 ];
 
 function findClosestCourse(freq){
@@ -60,4 +87,11 @@ function findClosestCourse(freq){
   return best;
 }
 
-export { rms, detectPitchYIN, frequencyToNote, COURSES, findClosestCourse };
+export {
+  rms,
+  detectPitchYIN,
+  detectPitchZeroCrossing,
+  frequencyToNote,
+  COURSES,
+  findClosestCourse
+};
