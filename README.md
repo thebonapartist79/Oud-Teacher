@@ -1,18 +1,5 @@
-# Oud Tutor (Modern Minimal · Linear Meter + Pegboard)
+# Oud Teacher · Pro Tuner (CFADGC)
+Canvas fine‑tune bar + chromatic ruler, six oud course columns (C2 F2 A2 D3 G3 C4), YIN + zero‑cross fallback, adaptive gate, median smoothing, 1.2 s hold, wood theme + CB‑safe toggle. Fully client‑side.
 
-A fast, static site with a **browser-based oud tuner** (CFADGC) using a **horizontal linear meter** and a purely informational **pegboard** that mirrors your instrument layout. Runs entirely in the browser.
-
-## Local test (Codespaces or local)
-```bash
-python3 -m http.server 8080
-# Open the forwarded HTTPS URL in Codespaces (or http://localhost:8080 locally)
-```
-Click **Start Tuner** and allow mic access.
-
-## Deploy (Cloudflare Pages)
-- Framework preset: **None**
-- Build command: **(leave blank)**
-- Output: **/**
-
-## Edit lessons
-Update `data/lessons.json` with Cloudflare Stream, YouTube, or file links.
+## Run
+python3 -m http.server 8080  # open HTTPS forwarded URL in Codespaces, Start Tuner, allow mic.

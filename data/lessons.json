@@ -1,8 +1,8 @@
 [
   {
     "id": "lesson-1",
-    "title": "Holding the Oud & Right-Hand Basics (sample)",
-    "description": "Replace this sample with your own upload by editing data/lessons.json.",
+    "title": "Holding the Oud & Right\u2011Hand Basics (sample)",
+    "description": "Replace this with your own video by editing data/lessons.json.",
     "video": {
       "type": "file",
       "src": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
