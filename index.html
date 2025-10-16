@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Oud Tutor · Tuner (CFADGC)</title>
-  <meta name="description" content="Beginner-friendly oud tuner and lessons. Preset: CFADGC." />
+  <title>Oud Tutor · CFADGC Tuner</title>
+  <meta name="description" content="Modern minimal oud tuner with linear meter and course columns. Preset CFADGC." />
   <link rel="stylesheet" href="assets/style.css" />
 </head>
-<body class="theme-modern">
+<body>
   <header class="site-header">
     <div class="container header-inner">
       <h1 class="brand">Oud Tutor</h1>
@@ -23,7 +23,7 @@
     <section class="hero compact">
       <div class="left">
         <h2>Linear Tuner</h2>
-        <p class="subtitle">Preset: <strong>CFADGC</strong> (low → high). Pluck <em>one string</em> of the course.</p>
+        <p class="subtitle">Preset: <strong>CFADGC</strong> (low → high). Rightmost course is <strong>C4</strong>.</p>
       </div>
       <div class="right controls-row">
         <button id="startBtn" class="btn primary">Start Tuner</button>
@@ -35,59 +35,44 @@
       </div>
     </section>
 
-    <!-- Linear rack meter -->
+    <!-- Center readout with big cents above the note -->
+    <section class="center-readout">
+      <div id="centsBig" class="cents-big">0.0</div>
+      <div id="noteDisplay" class="note-big">—</div>
+      <div id="freqDisplay" class="freq-small">0.00 Hz</div>
+    </section>
+
+    <!-- Course columns -->
+    <section class="courses" aria-label="Oud courses, left to right">
+      <div id="courseRow" class="course-row"></div>
+    </section>
+
+    <!-- Fine-tune bar (linear meter) -->
     <section class="meter-linear" role="img" aria-label="Pitch offset meter">
       <div class="meter-track">
         <div class="meter-gradient"></div>
         <div class="meter-center"></div>
-        <div class="meter-needle" id="needleLinear"></div>
+        <div class="meter-needle" id="needle"></div>
       </div>
       <div class="meter-scale">
-        <span>-50¢</span><span>-25¢</span><span>0¢</span><span>+25¢</span><span>+50¢</span>
+        <span>-30¢</span><span>-15¢</span><span>0¢</span><span>+15¢</span><span>+30¢</span>
       </div>
     </section>
 
-    <section class="readout-block">
-      <div class="note" id="noteDisplay" aria-live="polite" aria-atomic="true">—</div>
-      <div class="minor">
-        <span id="centsDisplay">0¢</span> • <span id="freqDisplay">0.00 Hz</span> • <span id="confDisplay">Confidence: 0%</span>
-      </div>
+    <!-- Input level -->
+    <section class="readout-block tight">
       <div class="level-bar modern" id="levelBar"><div class="level-fill" id="levelFill"></div></div>
     </section>
 
-    <!-- Pegboard visualization (informational only) -->
-    <section class="pegboard">
-      <h3>Pegboard (informational)</h3>
-      <div class="pegbox">
-        <div class="row row-top" id="pegRowTop">
-          <!-- Top row: G3(b), G3(t), D3(b), D3(t), F2(b), F2(t) -->
-        </div>
-        <div class="row row-bottom" id="pegRowBottom">
-          <!-- Bottom row: C4(b), C4(t), A2(b), A2(t), C2 -->
-        </div>
-      </div>
-      <p class="helper">This diagram mirrors your pegs. When you pluck a string, the nearest course highlights so you know which pegs you’re tuning.</p>
-    </section>
-
-    <section class="faq">
-      <details>
-        <summary>Troubleshooting</summary>
-        <ul>
-          <li>Pluck one string of the pair and mute the other to avoid beating.</li>
-          <li>Hold the phone 20–30 cm from the rosette. Avoid HVAC noise.</li>
-          <li>If the needle jitters, try a slightly firmer pluck.</li>
-        </ul>
-      </details>
-    </section>
   </main>
 
   <footer class="site-footer">
     <div class="container">
-      <p>© <span id="year"></span> Oud Tutor · CFADGC · Local-only audio processing</p>
+      <p>© <span id="year"></span> Oud Tutor · CFADGC · On-device audio only</p>
     </div>
   </footer>
 
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
-  <script type="module" src="assets/tuner-linear.js"></script>
+  <script type="module" src="assets/tuner.js"></script>
 </body>
 </html>
