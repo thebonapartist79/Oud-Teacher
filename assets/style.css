@@ -1,11 +1,11 @@
-/* Minimal "Florian-style" tuner */
+/* One-meter minimal tuner */
 :root{
   --bg:#0b0c10; --panel:#14161c; --text:#e7e9ee; --muted:#a9afbd;
   --good:#22c55e; --warn:#f59e0b; --bad:#ef4444;
 }
 
 *{box-sizing:border-box} html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-.wrap{max-width:980px;margin:32px auto;padding:0 16px}
+.wrap{max-width:1000px;margin:32px auto;padding:0 16px}
 h1{font-weight:800;margin:0 0 14px 0}
 .controls{display:flex;gap:10px;align-items:center;margin-bottom:14px}
 .btn{border:1px solid #283047;background:#1a1f2b;color:var(--text);padding:10px 14px;border-radius:10px;cursor:pointer}
@@ -13,13 +13,11 @@ h1{font-weight:800;margin:0 0 14px 0}
 .btn[disabled]{opacity:.6;cursor:not-allowed}
 .toggle{display:inline-flex;gap:8px;align-items:center;color:var(--muted)}
 
-.note-panel{background:#161a22;border:1px solid #252c3e;border-radius:12px;padding:16px;margin:10px 0;display:grid;justify-items:center}
+.note-panel{background:#161a22;border:1px solid #252c3e;border-radius:12px;padding:18px;margin:10px 0;display:grid;justify-items:center}
 .note{font-size:64px;font-weight:900;letter-spacing:.5px}
 .cents{font-size:22px;color:var(--muted)}
 .hz{font-size:16px;color:var(--muted)}
 
-.ruler-panel,.meter-panel{background:#1b202a;border:1px solid #252c3e;border-radius:12px;padding:10px;margin-top:10px}
+.meter-panel{background:#1b202a;border:1px solid #252c3e;border-radius:12px;padding:10px;margin-top:10px}
 .level .bar{height:10px;background:#121722;border:1px solid #252c3e;border-radius:999px;overflow:hidden;margin-top:12px}
 .level .fill{height:100%;width:0;background:linear-gradient(90deg,#38bdf8,#22c55e)}
-
-/* ruler look (yellow tape) drawn by canvas */

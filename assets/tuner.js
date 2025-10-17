@@ -1,4 +1,4 @@
-// Minimal chromatic tuner with canvas ruler + meter (no themes/columns)
+// One-meter chromatic tuner (no ruler). Fine ticks and zoom.
 const startBtn = document.getElementById('startBtn');
 const stopBtn  = document.getElementById('stopBtn');
 const refTgl   = document.getElementById('refToneToggle');
@@ -9,9 +9,7 @@ const centsEl= document.getElementById('cents');
 const hzEl   = document.getElementById('hz');
 const lvl    = document.getElementById('lvl');
 
-const ruler  = document.getElementById('ruler');
 const meter  = document.getElementById('meter');
-const rctx   = ruler.getContext('2d');
 const mctx   = meter.getContext('2d');
 
 let ac=null, analyser=null, stream=null, src=null, hp=null, lp=null, work=null, raf=0;
@@ -58,7 +56,7 @@ function stop(){
   if (ac) ac.close();
   ac=analyser=src=null; stream=null; work=null; holdUntil=0; lastStable=null; noiseFloor=0;
   startBtn.disabled=false; stopBtn.disabled=true;
-  drawRuler(440); drawMeter(0,'bad');
+  drawMeter(0,'bad');
   noteEl.textContent='—'; centsEl.textContent='0.0¢'; hzEl.textContent='0.00 Hz'; lvl.style.width='0%';
 }
 function setRef(on){ if(!ac||!refGain) return; refGain.gain.cancelScheduledValues(ac.currentTime); refGain.gain.setTargetAtTime(on?0.06:0.0, ac.currentTime, 0.05); }
@@ -91,7 +89,6 @@ function loop(){
       hzEl.textContent = medHz.toFixed(2)+' Hz';
 
       drawMeter(cents, state);
-      drawRuler(medHz);
 
       lastStable = {note,cents,hz:medHz};
       holdUntil = now + HOLD_MS;
@@ -102,63 +99,47 @@ function loop(){
       centsEl.textContent = (cents>=0?'+':'−') + Math.abs(cents).toFixed(1)+'¢';
       hzEl.textContent = hz.toFixed(2)+' Hz';
       drawMeter(cents, state);
-      drawRuler(hz);
     }
   }
 }
 
-/* ---------- Drawing ---------- */
+/* ---------- Drawing (single meter, fine-tuned) ---------- */
 function drawMeter(cents, state){
   const w = meter.clientWidth, h = meter.clientHeight;
   meter.width = w; meter.height = h;
   mctx.clearRect(0,0,w,h);
+
   const grad = mctx.createLinearGradient(0,0,w,0);
-  grad.addColorStop(0,'rgba(255,77,77,0.08)');
-  grad.addColorStop(0.5,'rgba(56,210,109,0.18)');
-  grad.addColorStop(1,'rgba(255,77,77,0.08)');
+  grad.addColorStop(0,'rgba(255,77,77,0.07)');
+  grad.addColorStop(0.5,'rgba(56,210,109,0.16)');
+  grad.addColorStop(1,'rgba(255,77,77,0.07)');
   mctx.fillStyle = grad; mctx.fillRect(0,0,w,h);
-  mctx.fillStyle = '#2a3246'; mctx.fillRect(Math.floor(w/2)-1, 8, 2, h-16);
-  mctx.strokeStyle = 'rgba(233,238,255,0.25)';
-  for (let c=-zoomSpan;c<=zoomSpan;c+=5){
-    const x = ((c+zoomSpan)/(2*zoomSpan))*w, th = (c%10===0)?h*.35:h*.25;
-    mctx.beginPath(); mctx.moveTo(x,h-th-8); mctx.lineTo(x,h-8); mctx.stroke();
+
+  mctx.fillStyle = 'rgba(34,197,94,0.08)';
+  const bandW = w * 0.22;
+  mctx.fillRect((w-bandW)/2, 0, bandW, h);
+
+  mctx.fillStyle = '#2a3246';
+  mctx.fillRect(Math.floor(w/2)-1, 8, 2, h-16);
+
+  // 1¢ ticks with 5¢/10¢ emphasis
+  for (let c=-zoomSpan; c<=zoomSpan; c++){
+    const x = ((c+zoomSpan)/(2*zoomSpan))*w;
+    let th = h*0.18;
+    if (c % 10 === 0) th = h*0.40;
+    else if (c % 5 === 0) th = h*0.28;
+    mctx.strokeStyle = 'rgba(233,238,255,0.25)';
+    mctx.beginPath(); mctx.moveTo(x, h-th-8); mctx.lineTo(x, h-8); mctx.stroke();
   }
+
   const clamp = Math.max(-zoomSpan, Math.min(zoomSpan, cents));
   const nx = ((clamp+zoomSpan)/(2*zoomSpan))*w;
   const color = state==='good'?'#22c55e':state==='warn'?'#f59e0b':'#ef4444';
-  mctx.fillStyle = color; mctx.fillRect(nx-2,6,4,h-12);
-  mctx.fillStyle = 'rgba(255,255,255,0.12)'; mctx.fillRect(nx-5,12,10,6);
-}
+  mctx.fillStyle = color; mctx.fillRect(nx-2, 6, 4, h-12);
+  mctx.fillStyle = 'rgba(255,255,255,0.12)'; mctx.fillRect(nx-5, 12, 10, 6);
 
-function drawRuler(freq){
-  const w = ruler.clientWidth, h = ruler.clientHeight;
-  ruler.width = w; ruler.height = h;
-  rctx.clearRect(0,0,w,h);
-
-  const grad = rctx.createLinearGradient(0,0,0,h);
-  grad.addColorStop(0,'#f2d77b'); grad.addColorStop(1,'#e8c868');
-  rctx.fillStyle = grad; rctx.fillRect(0,0,w,h);
-
-  const names = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
-  const a4 = 440;
-  const nCenter = Math.round(12*Math.log2(freq/a4)+69);
-  const pxNote = w/8, cx = w/2;
-
-  rctx.fillStyle = '#000'; rctx.strokeStyle = '#000'; rctx.lineWidth = 2;
-  rctx.textAlign='center'; rctx.textBaseline='bottom'; rctx.font='16px system-ui,-apple-system,Segoe UI,Roboto,Arial';
-
-  for (let k=-6;k<=6;k++){
-    const x = cx + k*pxNote;
-    rctx.beginPath(); rctx.moveTo(x,0); rctx.lineTo(x,h*0.55); rctx.stroke();
-    for (let m=1;m<4;m++){
-      const xm = x + (m*pxNote)/4;
-      rctx.beginPath(); rctx.moveTo(xm,0); rctx.lineTo(xm,h*0.30); rctx.stroke();
-    }
-    const lbl = ((nCenter+k)%12+12)%12;
-    rctx.fillText(names[lbl], x, h-4);
-  }
-  rctx.strokeStyle='#d11'; rctx.lineWidth=2;
-  rctx.beginPath(); rctx.moveTo(cx,0); rctx.lineTo(cx,h); rctx.stroke();
+  mctx.fillStyle = '#a9afbd'; mctx.font = '12px system-ui,-apple-system,Segoe UI,Roboto,Arial'; mctx.textAlign='center';
+  mctx.fillText('−'+zoomSpan+'¢', 16, 14); mctx.fillText('0¢', w/2, 14); mctx.fillText('+'+zoomSpan+'¢', w-24, 14);
 }
 
 /* ---------- Detection ---------- */

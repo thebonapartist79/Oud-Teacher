@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chromatic Tuner (CFADGC)</title>
-  <meta name="description" content="Fast chromatic tuner with canvas ruler and big note display." />
+  <title>Chromatic Tuner</title>
+  <meta name="description" content="Fast chromatic tuner with a single fine-tune meter." />
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
@@ -23,12 +23,9 @@
       <div id="hz" class="hz">0.00 Hz</div>
     </section>
 
-    <section class="ruler-panel">
-      <canvas id="ruler" width="900" height="130"></canvas>
-    </section>
-
+    <!-- Single enlarged fine-tune meter -->
     <section class="meter-panel">
-      <canvas id="meter" width="900" height="70"></canvas>
+      <canvas id="meter" width="980" height="130"></canvas>
     </section>
 
     <section class="level">
