@@ -3,80 +3,39 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Oud Teacher · Pro Tuner (CFADGC)</title>
-  <meta name="description" content="Professional oud tuner with chromatic ruler, canvas meter, and CFADGC courses." />
+  <title>Chromatic Tuner (CFADGC)</title>
+  <meta name="description" content="Fast chromatic tuner with canvas ruler and big note display." />
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <h1 class="brand">Oud Teacher</h1>
-      <nav class="nav">
-        <a href="index.html" aria-current="page">Tuner</a>
-        <a href="lessons.html">Lessons</a>
-        <a href="about.html">About</a>
-      </nav>
+  <main class="wrap">
+    <h1>Chromatic Tuner</h1>
+    <div class="controls">
+      <button id="startBtn" class="btn primary">Start</button>
+      <button id="stopBtn" class="btn" disabled>Stop</button>
+      <label class="toggle"><input id="refToneToggle" type="checkbox" /> <span>Reference</span></label>
+      <button id="zoomBtn" class="btn">Zoom</button>
     </div>
-  </header>
 
-  <main class="container">
-    <section class="hero compact">
-      <div class="left">
-        <h2>Pro Tuner</h2>
-        <p class="subtitle">Preset: <strong>CFADGC</strong> (low → high). Rightmost course is <strong>C4</strong>.</p>
-      </div>
-      <div class="right controls-row">
-        <button id="startBtn" class="btn primary">Start Tuner</button>
-        <button id="stopBtn" class="btn" disabled>Stop</button>
-        <label class="toggle">
-          <input type="checkbox" id="refToneToggle" />
-          <span>Reference tones</span>
-        </label>
-        <label class="toggle">
-          <input type="checkbox" id="woodThemeToggle" />
-          <span>Wood theme</span>
-        </label>
-        <label class="toggle">
-          <input type="checkbox" id="cbSafeToggle" />
-          <span>CB‑safe colors</span>
-        </label>
-        <button id="zoomBtn" class="btn">Zoom</button>
-      </div>
+    <section class="note-panel">
+      <div id="note" class="note">—</div>
+      <div id="cents" class="cents">0.0¢</div>
+      <div id="hz" class="hz">0.00 Hz</div>
     </section>
 
-    <!-- Center readout -->
-    <section class="center-readout">
-      <div id="centsBig" class="cents-big">0.0</div>
-      <div id="noteDisplay" class="note-big">—</div>
-      <div id="freqDisplay" class="freq-small">0.00 Hz</div>
+    <section class="ruler-panel">
+      <canvas id="ruler" width="900" height="130"></canvas>
     </section>
 
-    <!-- Courses -->
-    <section class="courses" aria-label="Oud courses, left to right">
-      <div id="courseRow" class="course-row"></div>
+    <section class="meter-panel">
+      <canvas id="meter" width="900" height="70"></canvas>
     </section>
 
-    <!-- Canvas meter + chromatic ruler -->
-    <section class="meter-linear">
-      <canvas id="meterCanvas" width="960" height="84"></canvas>
-    </section>
-    <section class="ruler">
-      <canvas id="rulerCanvas" width="960" height="90"></canvas>
-    </section>
-
-    <!-- Level bar -->
-    <section class="readout-block tight">
-      <div class="level-bar modern" id="levelBar"><div class="level-fill" id="levelFill"></div></div>
+    <section class="level">
+      <div class="bar"><div id="lvl" class="fill"></div></div>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      <p>© <span id="year"></span> Oud Teacher · On‑device audio only</p>
-    </div>
-  </footer>
-
-  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
   <script type="module" src="assets/tuner.js"></script>
 </body>
 </html>
